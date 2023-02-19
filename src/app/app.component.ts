@@ -28,8 +28,18 @@ export class AppComponent implements OnInit {
           type: 'room_info',
         });
       }
+
       if (message.type === 'room_info') {
         this.rooms = message.rooms;
+      }
+
+      if (message.type === 'room_joined') {
+        this.userService.room = message.room_name;
+        console.log('Joined room: ', this.userService.room);
+      }
+
+      if (message.type === 'room_full') {
+        console.log(`Room ${message.room_name} is full!`);
       }
     });
   }
@@ -39,10 +49,10 @@ export class AppComponent implements OnInit {
   }
 
   joinRoom(roomName: string) {
-    // this.websocketService.sendMessage({
-    //   type: 'join_room',
-    //   room: roomName,
-    // });
+    this.websocketService.sendMessage({
+      type: 'join_room',
+      room_name: roomName,
+    });
   }
 
 }
