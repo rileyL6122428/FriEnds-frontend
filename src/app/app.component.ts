@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { catchError, EMPTY, Subject, switchAll, tap } from 'rxjs';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-
-const WS_ENDPOINT = 'ws://127.0.0.1:8000/ws/chat/lobby/';
+import { UserService } from './user.service';
+import { WebsocketService } from './websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -10,38 +8,41 @@ const WS_ENDPOINT = 'ws://127.0.0.1:8000/ws/chat/lobby/';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  private socket$: WebSocketSubject<any> | null = null;
-  public messages$ = new Subject<any>();
+
+  rooms: {name: string, capacity: string}[] = [];
+
+  constructor(
+    private websocketService: WebsocketService,
+    private userService: UserService,
+  ) {}
 
   public ngOnInit(): void {
-    this.connect();
-    this.messages$.subscribe(
-      (message) => {
-        console.log('Message received: ', message);
-      }
-    );
-  }
+    this.websocketService.connect();
+    this.websocketService.messages$.subscribe((message) => {
+      console.log('Message received: ', message);
 
-  public connect(): void {
-    if (!this.socket$ || this.socket$.closed) {
-      this.socket$ = this.getNewWebSocket();
-      this.socket$.pipe(
-        tap({ error: error => console.log(error) }),
-        catchError(_ => EMPTY)
-      )
-        .subscribe((messages) => {
-          this.messages$.next(messages);
+      if (message.type === 'user_created') {
+        this.userService.created = true;
+        this.userService.name = message.username;
+        this.websocketService.sendMessage({
+          type: 'room_info',
         });
-    }
+      }
+      if (message.type === 'room_info') {
+        this.rooms = message.rooms;
+      }
+    });
   }
 
-  private getNewWebSocket() {
-    return webSocket(WS_ENDPOINT);
+  get username(): string {
+    return this.userService.name;
   }
-  sendMessage(message: any) {
-    this.socket$!.next({ message });
+
+  joinRoom(roomName: string) {
+    // this.websocketService.sendMessage({
+    //   type: 'join_room',
+    //   room: roomName,
+    // });
   }
-  close() {
-    this.socket$!.complete();
-  }
+
 }

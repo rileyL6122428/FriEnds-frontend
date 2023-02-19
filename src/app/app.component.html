@@ -1,6 +1,14 @@
-<p>Hello, World!</p>
+<!-- <p>Hello, World!</p>
 
 <form>
   <button (click)="sendMessage('test')" type="button">Send test</button>
-</form>
-<router-outlet></router-outlet>
+</form> -->
+<p *ngIf="username">Hello, {{username || '...'}}</p>
+
+<ul>
+  <li *ngFor="let room of rooms">
+    <p>{{room.name}}: {{room.capacity}} users</p>
+    <button type="button" (click)="joinRoom(room.name)">Join</button>
+  </li>
+</ul>
+<!-- <router-outlet></router-outlet> -->
