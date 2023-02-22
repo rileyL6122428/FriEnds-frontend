@@ -1,9 +1,1 @@
-<p *ngIf="username">Hello, {{username || '...'}}</p>
-
-<ul>
-  <li *ngFor="let room of rooms">
-    <p>{{room.name}}: {{room.capacity}} users</p>
-    <button type="button" (click)="joinRoom(room.name)">Join</button>
-  </li>
-</ul>
-<!-- <router-outlet></router-outlet> -->
+<router-outlet></router-outlet>

@@ -1,5 +1,8 @@
-<p>Choose a room to join!</p>
+<p *ngIf="username">Hello, {{username || '...'}}</p>
 
 <ul>
-  <li><a [routerLink]="['/room/room1']">room1</a></li>
+  <li *ngFor="let room of rooms">
+    <p>{{room.name}}: {{room.occupants.length}}/{{room.capacity}} users</p>
+    <button type="button" (click)="joinRoom(room.name)">Join</button>
+  </li>
 </ul>
