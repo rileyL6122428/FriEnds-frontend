@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { WebsocketService } from '../websocket.service';
+import { Room } from './room.model';
 
 @Component({
   selector: 'app-room',
@@ -9,8 +10,7 @@ import { WebsocketService } from '../websocket.service';
   styleUrls: ['./room.component.scss']
 })
 export class RoomComponent implements OnInit {
-
-  roomName: string = '';
+  room: Room = { name: '', capacity: 0, occupants: [] };
   subs: Subscription[] = [];
 
   constructor(
@@ -19,13 +19,30 @@ export class RoomComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.roomName = this.activatedRoute.snapshot.params['roomName'];
+    this.room.name = this.activatedRoute.snapshot.params['roomName'];
+
+    this.websocketService.connect();
     this.subs[0] = this.websocketService.messages$
       .subscribe((message) => this.handleMessage(message));
+
+    this.websocketService.sendMessage({
+      type: 'room_info',
+    });
   }
 
   private handleMessage(message: any) {
     console.log(this, 'Message received: ', message);
+
+    if (message.type === 'room_info') {
+      this.room = (
+        message.rooms.find((room: Room) => room.name === this.room.name) ||
+        this.room
+      );
+    }
+  }
+
+  get roomIsFull(): boolean {
+    return this.room.occupants.length >= this.room.capacity;
   }
 
 }

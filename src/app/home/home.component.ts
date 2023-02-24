@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from '../user.service';
 import { WebsocketService } from '../websocket.service';
+import { Room } from '../room/room.model';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,7 @@ import { WebsocketService } from '../websocket.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  rooms: { name: string, capacity: number, occupants: {username: string}[] }[] = [];
+  rooms: Room[] = [];
   subs: Subscription[] = [];
 
   constructor(

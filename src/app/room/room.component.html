@@ -1,1 +1,11 @@
-<p>Welcome to {{roomName}}!</p>
+<h2>Welcome to {{room.name}}!</h2>
+
+<p>{{room.occupants.length}}/{{room.capacity}} players joined</p>
+
+<p *ngIf="roomIsFull">
+  Game ready to start!
+</p>
+
+<p *ngIf="!roomIsFull">
+  Waiting for more players...
+</p>
