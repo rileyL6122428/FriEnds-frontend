@@ -38,8 +38,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     if (message.type === 'room_joined') {
-      this.userService.room = message.room_name;
-      this.router.navigate([`/room/${message.room_name}`]);
+      // this.userService.room = message.room_name;
+      // this.router.navigate([`/room/${message.room_name}`]);
     }
 
     if (message.type === 'room_full') {
@@ -56,6 +56,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   get username(): string {
-    return this.userService.name;
+    return this.userService.userName;
   }
 }

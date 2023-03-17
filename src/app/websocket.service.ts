@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { catchError, EMPTY, Subject, tap } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 
-const WS_ENDPOINT = 'ws://127.0.0.1:8000/ws/chat/room1/';
+const WS_ENDPOINT = 'ws://127.0.0.1:8000/ws/friends/';
 
 @Injectable({
   providedIn: 'root'

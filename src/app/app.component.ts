@@ -19,18 +19,50 @@ export class AppComponent implements OnInit {
     this.websocketService.messages$.subscribe(
       (message) => this.handleMessage(message)
     );
+
+    if (!this.userService.created) {
+      this.createUser();
+    } else {
+      this.authenticate();
+    }
   }
 
   handleMessage(message: any) {
     console.log(this, 'Message received: ', message);
 
-    if (message.type === 'user_created') {
-      this.userService.created = true;
-      this.userService.name = message.username;
-      this.websocketService.sendMessage({
-        type: 'room_info',
+    if (message.type === 'authenticated') {
+      this.userService.registerAuth({
+        clientName: message.client_name,
+        userName: message.username,
       });
+
+      this.getRoomInfo();
     }
+
+    if (message.type === 'authenticate error' && message.error === 'User not found') {
+      this.userService.deleteUser();
+      this.createUser();
+    }
+  }
+
+  createUser() {
+    this.websocketService.sendMessage({
+      type: 'create_user',
+    });
+  }
+
+  getRoomInfo() {
+    this.websocketService.sendMessage({
+      type: 'room_info',
+    });
+  }
+
+  authenticate() {
+    this.websocketService.sendMessage({
+      type: 'authenticate',
+      client_name: this.userService.clientName,
+      username: this.userService.userName,
+    });
   }
 
 }
