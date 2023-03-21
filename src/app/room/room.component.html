@@ -1,4 +1,6 @@
-<h2>Welcome to {{room.name}}!</h2>
+<h2>{{leavingRoom ? "Leaving" : "Welcome to"}} {{room.name}}!</h2>
+
+<button (click)="leaveRoom()">Leave room</button>
 
 <p>{{room.occupants.length}}/{{room.capacity}} players joined</p>
 

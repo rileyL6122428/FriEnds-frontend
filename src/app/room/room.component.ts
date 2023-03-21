@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { UserService } from '../user.service';
 import { WebsocketService } from '../websocket.service';
 import { Room } from './room.model';
 
@@ -12,10 +13,13 @@ import { Room } from './room.model';
 export class RoomComponent implements OnInit, OnDestroy {
   room: Room = { name: '', capacity: 0, occupants: [] };
   subs: Subscription[] = [];
+  leavingRoom = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private websocketService: WebsocketService,
+    private router: Router,
+    private userService: UserService,
   ) { }
 
   ngOnInit(): void {
@@ -43,6 +47,18 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.room
       );
     }
+
+    if (message.type === 'left_room') {
+      this.router.navigate([`/`]);
+      this.userService.assignRoomName('');
+    }
+  }
+
+  leaveRoom() {
+    this.websocketService.sendMessage({
+      type: 'leave_room',
+    });
+    this.leavingRoom = true;
   }
 
   get roomIsFull(): boolean {
