@@ -10,9 +10,14 @@ export class UserService {
     sessionStorage.setItem('userName', userName);
   }
 
+  assignRoomName(roomName: string) {
+    sessionStorage.setItem('roomName', roomName);
+  }
+
   deleteUser() {
     sessionStorage.removeItem('clientName');
     sessionStorage.removeItem('userName');
+    sessionStorage.removeItem('roomName');
   }
 
   get created(): boolean {

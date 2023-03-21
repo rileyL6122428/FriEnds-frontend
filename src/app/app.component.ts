@@ -9,26 +9,38 @@ import { WebsocketService } from './websocket.service';
 })
 export class AppComponent implements OnInit {
 
+  connected = false;
+  heartbeatInterval: any;
+
   constructor(
     private websocketService: WebsocketService,
     private userService: UserService,
   ) {}
 
   ngOnInit(): void {
-    this.websocketService.connect();
     this.websocketService.messages$.subscribe(
       (message) => this.handleMessage(message)
     );
-
-    if (!this.userService.created) {
-      this.createUser();
-    } else {
-      this.authenticate();
-    }
+    this.websocketService.connectionErrors$.subscribe(
+      (error) => {
+        console.log(this, 'Connection error: ', error);
+        this.connected = false;
+      }
+    );
+    this.websocketService.connect();
   }
 
   handleMessage(message: any) {
+    this.connected = true;
     console.log(this, 'Message received: ', message);
+
+    if (message.type === 'client_created') {
+      if (!this.userService.created) {
+        this.createUser();
+      } else {
+        this.authenticate();
+      }
+    }
 
     if (message.type === 'authenticated') {
       this.userService.registerAuth({
@@ -37,6 +49,8 @@ export class AppComponent implements OnInit {
       });
 
       this.getRoomInfo();
+
+      this.scheduleHeartbeat();
     }
 
     if (message.type === 'authenticate error' && message.error === 'User not found') {
@@ -63,6 +77,17 @@ export class AppComponent implements OnInit {
       client_name: this.userService.clientName,
       username: this.userService.userName,
     });
+  }
+
+  scheduleHeartbeat() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+    this.heartbeatInterval = setInterval(() => {
+      this.websocketService.sendMessage({
+        type: 'heartbeat'
+      });
+    }, 2000);
   }
 
 }

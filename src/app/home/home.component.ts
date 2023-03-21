@@ -37,9 +37,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.rooms = message.rooms;
     }
 
-    if (message.type === 'room_joined') {
-      // this.userService.room = message.room_name;
-      // this.router.navigate([`/room/${message.room_name}`]);
+    if (message.type === 'joined_room') {
+      this.userService.assignRoomName(message.room_name);
+      this.router.navigate([`/room/${message.room_name}`]);
     }
 
     if (message.type === 'room_full') {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { WebsocketService } from '../websocket.service';
@@ -9,7 +9,7 @@ import { Room } from './room.model';
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, OnDestroy {
   room: Room = { name: '', capacity: 0, occupants: [] };
   subs: Subscription[] = [];
 
@@ -28,6 +28,10 @@ export class RoomComponent implements OnInit {
     this.websocketService.sendMessage({
       type: 'room_info',
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 
   private handleMessage(message: any) {
