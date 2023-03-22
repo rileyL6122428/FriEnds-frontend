@@ -1,13 +1,8 @@
 <h2>{{leavingRoom ? "Leaving" : "Welcome to"}} {{room.name}}!</h2>
 
-<button (click)="leaveRoom()">Leave room</button>
+<div>
+  <button (click)="leaveRoom()">Leave room</button>
+</div>
 
-<p>{{room.occupants.length}}/{{room.capacity}} players joined</p>
-
-<p *ngIf="roomIsFull">
-  Game ready to start!
-</p>
-
-<p *ngIf="!roomIsFull">
-  Waiting for more players...
-</p>
+<canvas id="gameCanvas" #gameCanvas height="800" width="1200">
+</canvas>
