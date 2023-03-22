@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from '../user.service';
@@ -19,6 +19,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   @ViewChild('gameCanvas', { static: true })
   gameCanvasRef!: ElementRef<HTMLCanvasElement>;
   gameRenderer!: GameRenderer;
+  game!: Game;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -47,17 +48,8 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
     const canvas = this.gameCanvasRef.nativeElement;
     const ctx = canvas.getContext('2d')!;
 
-    const game: Game = {
-      state: 'waiting',
-      players: [],
-      requiredPlayers: 2,
-      grid: {
-        rows: 10,
-        cols: 10,
-      },
-    };
-
-    this.gameRenderer = new GameRenderer(game, ctx, canvasWidth, canvasHeight);
+    this.game = new Game();
+    this.gameRenderer = new GameRenderer(this.game, ctx, canvasWidth, canvasHeight);
     this.gameRenderer.render();
 
     this.requestGameInfo();
@@ -83,8 +75,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
     }
 
     if (message.type === 'game_info') {
-      const nextGame: Game = message.game;
-      this.gameRenderer.game = nextGame;
+      this.game.patch(message.game);
       this.gameRenderer.render();
     }
 
@@ -109,6 +100,27 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
 
   get roomIsFull(): boolean {
     return this.room.occupants.length >= this.room.capacity;
+  }
+
+  handleClick(event: any) {
+    const xCoord = event.offsetX;
+    const yCoord = event.offsetY;
+    this.gameRenderer.handleClick(xCoord, yCoord);
+    this.gameRenderer.render();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'ArrowUp') {
+      this.game.moveCursorUp();
+    } else if (event.key === 'ArrowDown') {
+      this.game.moveCursorDown();
+    } else if (event.key === 'ArrowLeft') {
+      this.game.moveCursorLeft();
+    } else if (event.key === 'ArrowRight') {
+      this.game.moveCursorRight();
+    }
+    this.gameRenderer.render();
   }
 
 }

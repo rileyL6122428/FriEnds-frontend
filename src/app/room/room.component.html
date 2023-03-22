@@ -4,5 +4,5 @@
   <button (click)="leaveRoom()">Leave room</button>
 </div>
 
-<canvas id="gameCanvas" #gameCanvas height="800" width="1200">
+<canvas (click)="handleClick($event)" id="gameCanvas" #gameCanvas height="800" width="1200">
 </canvas>

@@ -7,11 +7,68 @@ export interface Grid {
     cols: number;
 }
 
-export interface Game {
+export interface Cursor {
+    row: number;
+    col: number;
+}
+
+export class Game {
     state: 'waiting' | 'playing' | 'finished';
     players: Player[];
     requiredPlayers: number;
     grid: Grid;
+    cursor: Cursor;
+
+    constructor() {
+        this.state = 'waiting';
+        this.players = [];
+        this.requiredPlayers = 2;
+        this.grid = {
+            rows: 10,
+            cols: 10,
+        };
+        this.cursor = {
+            row: 0,
+            col: 0,
+        };
+    }
+
+    patch(data: Partial<Game>) {
+        Object.assign(this, data);
+    }
+
+    moveCursorTo(row: number, col: number) {
+        if (row < 0) {
+            row = 0;
+        } else if (row >= this.grid.rows) {
+            row = this.grid.rows - 1;
+        }
+
+        if (col < 0) {
+            col = 0;
+        } else if (col >= this.grid.cols) {
+            col = this.grid.cols - 1;
+        }
+
+        this.cursor.row = row;
+        this.cursor.col = col;
+    }
+
+    moveCursorUp() {
+        this.moveCursorTo(this.cursor.row - 1, this.cursor.col);
+    }
+
+    moveCursorDown() {
+        this.moveCursorTo(this.cursor.row + 1, this.cursor.col);
+    }
+
+    moveCursorLeft() {
+        this.moveCursorTo(this.cursor.row, this.cursor.col - 1);
+    }
+
+    moveCursorRight() {
+        this.moveCursorTo(this.cursor.row, this.cursor.col + 1);
+    }
 }
 
 export class GameRenderer {
@@ -51,6 +108,7 @@ export class GameRenderer {
         this.canvasCtx.fillText("Playing!", 10, 50);
 
         this.renderGrid();
+        this.renderCursor();
     }
     
     renderBackground() {
@@ -78,5 +136,32 @@ export class GameRenderer {
             this.canvasCtx.lineTo(colIdx * gridSpaceWidth, this.canvasHeight);
             this.canvasCtx.stroke();
         }
+    }
+
+    renderCursor() {
+        const gridRows = this.game.grid.rows;
+        const gridCols = this.game.grid.cols;
+        const gridSpaceWidth = this.canvasWidth / gridCols;
+        const gridSpaceHeight = this.canvasHeight / gridRows;
+    
+        this.canvasCtx.fillStyle = 'rgb(0, 255, 255, 0.5)';
+        this.canvasCtx.fillRect(
+            this.game.cursor.col * gridSpaceWidth,
+            this.game.cursor.row * gridSpaceHeight,
+            gridSpaceWidth,
+            gridSpaceHeight,
+        );
+    }
+
+    handleClick(offsetX: number, offsetY: number) {
+        const gridRows = this.game.grid.rows;
+        const gridCols = this.game.grid.cols;
+        const gridSpaceWidth = this.canvasWidth / gridCols;
+        const gridSpaceHeight = this.canvasHeight / gridRows;
+
+        const row = Math.floor(offsetY / gridSpaceHeight);
+        const col = Math.floor(offsetX / gridSpaceWidth);
+
+        this.game.moveCursorTo(row, col);
     }
 }
