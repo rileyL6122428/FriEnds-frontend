@@ -51,6 +51,10 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
       state: 'waiting',
       players: [],
       requiredPlayers: 2,
+      grid: {
+        rows: 10,
+        cols: 10,
+      },
     };
 
     this.gameRenderer = new GameRenderer(game, ctx, canvasWidth, canvasHeight);
