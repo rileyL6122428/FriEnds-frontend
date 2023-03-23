@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { UserService } from '../user.service';
 import { WebsocketService } from '../websocket.service';
 import { Room } from './room.model';
-import { Game, GameRenderer } from './game/game';
+import { Game, GameRenderer, Player } from './game/game';
 
 @Component({
   selector: 'app-room',
@@ -43,12 +43,13 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   
   ngAfterContentInit(): void {
     const canvasHeight = 800;
-    const canvasWidth = 1200;
+    const canvasWidth = 800;
 
     const canvas = this.gameCanvasRef.nativeElement;
     const ctx = canvas.getContext('2d')!;
 
-    this.game = new Game();
+    const mainPlayer: Player = { name: this.userService.userName }
+    this.game = new Game(mainPlayer);
     this.gameRenderer = new GameRenderer(this.game, ctx, canvasWidth, canvasHeight);
     this.gameRenderer.render();
 
