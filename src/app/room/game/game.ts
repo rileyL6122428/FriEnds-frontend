@@ -42,7 +42,7 @@ export class Game {
             cols: 10,
         };
         this.cursor = {
-            row: 0,
+            row: 1,
             col: 0,
         };
     }
@@ -104,6 +104,7 @@ export class GameRenderer {
         private canvasCtx: CanvasRenderingContext2D,
         private canvasWidth: number,
         private canvasHeight: number,
+        private mapSpriteSheet: HTMLImageElement,
     ) {}
 
     render() {
@@ -207,6 +208,31 @@ export class GameRenderer {
                 2 * Math.PI,
             );
             this.canvasCtx.fill();
+
+            const sourceX = 190;
+            const sourceY = 306;
+            const sourceWidth = 29;
+            const sourceHeight = 29;
+
+            // const destWidth = sourceWidth;
+            // const destHeight = sourceHeight;
+            const destWidth = sourceWidth * this.gridSpaceWidth / sourceWidth;
+            const destHeight = sourceHeight * this.gridSpaceHeight / sourceHeight;
+
+            const destX = boardPiece.col * gridSpaceWidth + gridSpaceWidth / 2 - destWidth / 2 - 1;
+            const destY = boardPiece.row * gridSpaceHeight + gridSpaceHeight / 2 - destHeight / 2 - 1;
+
+            this.canvasCtx.drawImage(
+                this.mapSpriteSheet,
+                sourceX,
+                sourceY,
+                sourceWidth,
+                sourceHeight,
+                destX,
+                destY,
+                destWidth,
+                destHeight,
+            )
         });
     }
 
@@ -236,5 +262,13 @@ export class GameRenderer {
         const col = Math.floor(offsetX / gridSpaceWidth);
 
         this.game.moveCursorTo(row, col);
+    }
+
+    private get gridSpaceWidth() {
+        return this.canvasWidth / this.game.grid.cols;
+    }
+
+    private get gridSpaceHeight() {
+        return this.canvasHeight / this.game.grid.rows;
     }
 }

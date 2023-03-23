@@ -16,6 +16,9 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   subs: Subscription[] = [];
   leavingRoom = false;
 
+  @ViewChild('spriteImage') spriteImageRef!: ElementRef<HTMLImageElement>;
+  spriteImage!: HTMLImageElement;
+
   @ViewChild('gameCanvas', { static: true })
   gameCanvasRef!: ElementRef<HTMLCanvasElement>;
   gameRenderer!: GameRenderer;
@@ -29,6 +32,9 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   ) { }
 
   ngOnInit(): void {
+    this.spriteImage = new Image();
+    this.spriteImage.src = 'assets/GBA - FE 7 - Map Sprites.png';
+
     this.room.name = this.activatedRoute.snapshot.params['roomName'];
 
     this.websocketService.connect();
@@ -42,6 +48,8 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   }
   
   ngAfterContentInit(): void {
+    // const spriteImage = this.spriteImageRef.nativeElement;
+
     const canvasHeight = 800;
     const canvasWidth = 800;
 
@@ -50,7 +58,13 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
 
     const mainPlayer: Player = { name: this.userService.userName }
     this.game = new Game(mainPlayer);
-    this.gameRenderer = new GameRenderer(this.game, ctx, canvasWidth, canvasHeight);
+    this.gameRenderer = new GameRenderer(
+      this.game,
+      ctx,
+      canvasWidth,
+      canvasHeight,
+      this.spriteImage,
+    );
     this.gameRenderer.render();
 
     this.requestGameInfo();

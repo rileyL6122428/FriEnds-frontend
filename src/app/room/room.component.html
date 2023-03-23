@@ -1,5 +1,10 @@
 <h2>{{leavingRoom ? "Leaving" : "Welcome to"}} {{room.name}}!</h2>
-
+<img
+  #spriteImage 
+  id="spriteImage"
+  style="display: none;"
+  src="assets/GBA - FE 7 - Map Sprites.png" />
+  
 <div>
   <button (click)="leaveRoom()">Leave room</button>
 </div>
