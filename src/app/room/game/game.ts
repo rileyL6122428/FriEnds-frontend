@@ -25,10 +25,12 @@ export class Game {
     grid: Grid;
     boardPieces: BoardPiece[];
     cursor: Cursor;
+    private _humanPlayers: Player[];
 
     constructor(private mainPlayer: Player) {
         this.state = 'waiting';
         this.players = [];
+        this._humanPlayers = [];
         this.requiredPlayers = 2;
         this.boardPieces = [
             { player: { name: 'Corrin59' }, row: 1, col: 0 },
@@ -47,6 +49,7 @@ export class Game {
 
     patch(data: Partial<Game>) {
         Object.assign(this, data);
+        this._humanPlayers = this.players.filter(player => player.name !== 'ENEMY');
     }
 
     moveCursorTo(row: number, col: number) {
@@ -89,6 +92,10 @@ export class Game {
     get activePlayer(): Player {
         return this.players[0];
     }
+
+    get humanPlayers(): Player[] {
+        return this._humanPlayers;
+    }
 }
 
 export class GameRenderer {
@@ -114,7 +121,7 @@ export class GameRenderer {
         this.canvasCtx.fillStyle = 'white';
         this.canvasCtx.fillText("Waiting for players...", 10, 50);
         this.canvasCtx.fillText(
-            `Players: ${this.game.players.length}/${this.game.requiredPlayers}`,
+            `Players: ${this.game.humanPlayers.length}/${this.game.requiredPlayers}`,
             10,
             100
         );
@@ -181,7 +188,7 @@ export class GameRenderer {
         const gridSpaceWidth = this.canvasWidth / gridCols;
         const gridSpaceHeight = this.canvasHeight / gridRows;
 
-        this.game.boardPieces.forEach(boardPiece => {
+        this.game.boardPieces.forEach(boardPiece => {            
             if (boardPiece.player.name === 'ENEMY') {
                 this.canvasCtx.fillStyle = 'rgb(255, 0, 0, 1)';
             } else if (boardPiece.player.name === this.game.mainPlayerName) {
