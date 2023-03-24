@@ -5,7 +5,7 @@ import { UserService } from '../user.service';
 import { WebsocketService } from '../websocket.service';
 import { Room } from './room.model';
 import { Game, Player } from './game/game';
-import { GameRenderer } from './game-rendering/game-renderer';
+import { GameRenderer } from './game-rendering/renderer-game';
 
 @Component({
   selector: 'app-room',
@@ -103,7 +103,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
 
     if (message.type === 'game_info') {
       this.game.patch(message.game);
-      this.gameRenderer.onGameStateChanged();
+      this.gameRenderer.onGameOverwritten();
       this.gameRenderer.render();
     }
 

@@ -1,4 +1,5 @@
-import { Game, Player, Cursor, BoardPiece } from "../game/game";
+import { BoardPiece } from "../game/game";
+import { RendererCommon } from "./renderer-common";
 
 export class AnimationFrame {
 
@@ -120,7 +121,7 @@ function getMapIdle(
         ),
         new AnimationFrame(
             spriteSheet,
-            5,
+            4,
 
             startX,
             startY + 32,
@@ -311,30 +312,24 @@ export class MapSpriteAnimations {
         private idle: Animation,
         private hover: Animation,
         private piece: BoardPiece,
-        private game: Game,
-
-        private canvasWidth: number,
-        private canvasHeight: number,
+        private rc: RendererCommon,
     ) { }
 
     render() {
-        const x = this.piece.col * this.canvasWidth / this.game.grid.cols;
-        const y = this.piece.row * this.canvasHeight / this.game.grid.rows;
-        const gridSpaceWidth = this.canvasWidth / this.game.grid.cols;
-        const gridSpaceHeight = this.canvasHeight / this.game.grid.rows;
-        if (this.game.cursorIsHovering(this.piece) && this.game.mainPlayerName === this.piece.player.name) {
+        const { x, y } = this.rc.gridSpaceToCanvas(this.piece.col, this.piece.row);
+        if (this.rc.game.cursorIsHovering(this.piece) && this.rc.game.mainPlayerName === this.piece.player.name) {
             this.hover.render(
                 x,
                 y,
-                gridSpaceWidth,
-                gridSpaceHeight,
+                this.rc.gridSpaceWidth,
+                this.rc.gridSpaceHeight,
             );
         } else {
             this.idle.render(
                 x,
                 y,
-                gridSpaceWidth,
-                gridSpaceHeight,
+                this.rc.gridSpaceWidth,
+                this.rc.gridSpaceHeight,
             );
         }
     }
@@ -348,16 +343,11 @@ export class MapSpritesRenderer {
         private playerSpriteSheet: HTMLImageElement,
         private allySpriteSheet: HTMLImageElement,
         private enemySpriteSheet: HTMLImageElement,
-
-        private game: Game,
-
-        private canvasCtx: CanvasRenderingContext2D,
-        private canvasWidth: number,
-        private canvasHeight: number,
+        private rc: RendererCommon,
     ) {
-        const mainPlayerName = this.game.mainPlayerName;
+        const mainPlayerName = this.rc.game.mainPlayerName;
 
-        this.pieceAnimations = this.game.boardPieces.map((piece: BoardPiece) => {
+        this.pieceAnimations = this.rc.game.boardPieces.map((piece: BoardPiece) => {
             let spriteSheet: HTMLImageElement;
             if (piece.player.name === mainPlayerName) {
                 spriteSheet = this.playerSpriteSheet;
@@ -371,18 +361,18 @@ export class MapSpritesRenderer {
 
             const idle = getMapIdle(
                 spriteSheet,
-                this.canvasCtx,
+                this.rc.ctx,
                 spriteCoords.idle.startX,
                 spriteCoords.idle.startY,
             );
             const hover = getMapHover(
                 spriteSheet,
-                this.canvasCtx,
+                this.rc.ctx,
                 spriteCoords.hover.startX,
                 spriteCoords.hover.startY,
             );
 
-            return new MapSpriteAnimations(idle, hover, piece, this.game, this.canvasWidth, this.canvasHeight);
+            return new MapSpriteAnimations(idle, hover, piece, this.rc);
         });
     }
 
