@@ -4,7 +4,8 @@ import { Subscription } from 'rxjs';
 import { UserService } from '../user.service';
 import { WebsocketService } from '../websocket.service';
 import { Room } from './room.model';
-import { Game, GameRenderer, Player } from './game/game';
+import { Game, Player } from './game/game';
+import { GameRenderer } from './game-rendering/game-renderer';
 
 @Component({
   selector: 'app-room',
@@ -16,8 +17,9 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   subs: Subscription[] = [];
   leavingRoom = false;
 
-  @ViewChild('spriteImage') spriteImageRef!: ElementRef<HTMLImageElement>;
-  spriteImage!: HTMLImageElement;
+  mainPlayerMapSprites!: HTMLImageElement;
+  enemyMapSprites!: HTMLImageElement;
+  allyMapSprites!: HTMLImageElement;
 
   @ViewChild('gameCanvas', { static: true })
   gameCanvasRef!: ElementRef<HTMLCanvasElement>;
@@ -32,8 +34,14 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
   ) { }
 
   ngOnInit(): void {
-    this.spriteImage = new Image();
-    this.spriteImage.src = 'assets/GBA - FE 7 - Map Sprites.png';
+    this.mainPlayerMapSprites = new Image();
+    this.mainPlayerMapSprites.src = 'assets/GBA - FE 7 - Map Sprites.png';
+
+    this.enemyMapSprites = new Image();
+    this.enemyMapSprites.src = 'assets/GBA - FE 7 - Map Sprites - Red Tint.png';
+
+    this.allyMapSprites = new Image();
+    this.allyMapSprites.src = 'assets/GBA - FE 7 - Map Sprites - Green Tint.png';
 
     this.room.name = this.activatedRoute.snapshot.params['roomName'];
 
@@ -63,10 +71,14 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
       ctx,
       canvasWidth,
       canvasHeight,
-      this.spriteImage,
+      this.mainPlayerMapSprites,
+      this.enemyMapSprites,
+      this.allyMapSprites
     );
     this.gameRenderer.render();
-
+    setInterval(() => {
+      this.gameRenderer.render();
+    }, 1000 / 30);
     this.requestGameInfo();
   }
 
@@ -91,6 +103,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
 
     if (message.type === 'game_info') {
       this.game.patch(message.game);
+      this.gameRenderer.onGameStateChanged();
       this.gameRenderer.render();
     }
 
