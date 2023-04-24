@@ -192,7 +192,7 @@ export function getMapHover(
 }
 
 
-const SRPITE_COORDS = {
+const SPRITE_COORDS = {
     eliwood: {
         idle: {
             startX: 190,
@@ -787,50 +787,50 @@ export class MapSpritesRenderer {
                 spriteSheet = this.enemySpriteSheet;
             }
 
-            // const spriteCoords = SRPITE_COORDS['hector'];
-            // const spriteCoords = SRPITE_COORDS['lyn'];
-            // const spriteCoords = SRPITE_COORDS['eliwood'];
-            // const spriteCoords = SRPITE_COORDS['mercenary'];
-            // const spriteCoords = SRPITE_COORDS['thief'];
-            // const spriteCoords = SRPITE_COORDS['myrmidon'];
-            // const spriteCoords = SRPITE_COORDS['fighter'];
-            // const spriteCoords = SRPITE_COORDS['knight'];
-            // const spriteCoords = SRPITE_COORDS['archer'];
-            // const spriteCoords = SRPITE_COORDS['monk'];
-            // const spriteCoords = SRPITE_COORDS['cleric'];
-            // const spriteCoords = SRPITE_COORDS['mage'];
-            // const spriteCoords = SRPITE_COORDS['shaman'];
-            // const spriteCoords = SRPITE_COORDS['cavalier'];
-            // const spriteCoords = SRPITE_COORDS['troubadaour'];
-            // const spriteCoords = SRPITE_COORDS['nomad'];
-            // const spriteCoords = SRPITE_COORDS['pegasusKnight'];
-            // const spriteCoords = SRPITE_COORDS['wyvernRider'];
-            // const spriteCoords = SRPITE_COORDS['pirate'];
-            // const spriteCoords = SRPITE_COORDS['brigand'];
-            // const spriteCoords = SRPITE_COORDS['dancer'];
-            // const spriteCoords = SRPITE_COORDS['archsage'];
-            // const spriteCoords = SRPITE_COORDS['knightLord'];
-            // const spriteCoords = SRPITE_COORDS['bladeLord'];
-            // const spriteCoords = SRPITE_COORDS['greatLord'];
-            // const spriteCoords = SRPITE_COORDS['hero'];
-            // const spriteCoords = SRPITE_COORDS['assassin'];
-            // const spriteCoords = SRPITE_COORDS['swordMaster'];
-            // const spriteCoords = SRPITE_COORDS['warrior'];
-            // const spriteCoords = SRPITE_COORDS['general'];
-            // const spriteCoords = SRPITE_COORDS['sniper'];
-            // const spriteCoords = SRPITE_COORDS['bishopMale'];
-            // const spriteCoords = SRPITE_COORDS['bishopFemale'];
-            // const spriteCoords = SRPITE_COORDS['sageMale'];
-            // const spriteCoords = SRPITE_COORDS['druid'];
-            // const spriteCoords = SRPITE_COORDS['paladin'];
-            // const spriteCoords = SRPITE_COORDS['valkyrie'];
-            // const spriteCoords = SRPITE_COORDS['nomadTrooper'];
-            // const spriteCoords = SRPITE_COORDS['falconKnight'];
-            // const spriteCoords = SRPITE_COORDS['wyvernLord'];
-            // const spriteCoords = SRPITE_COORDS['berserker'];
-            // const spriteCoords = SRPITE_COORDS['soldier'];
-            // const spriteCoords = SRPITE_COORDS['bard'];
-            const spriteCoords = SRPITE_COORDS['darkDruid'];
+            // const spriteCoords = SPRITE_COORDS['hector'];
+            // const spriteCoords = SPRITE_COORDS['lyn'];
+            const spriteCoords = SPRITE_COORDS['eliwood'];
+            // const spriteCoords = SPRITE_COORDS['mercenary'];
+            // const spriteCoords = SPRITE_COORDS['thief'];
+            // const spriteCoords = SPRITE_COORDS['myrmidon'];
+            // const spriteCoords = SPRITE_COORDS['fighter'];
+            // const spriteCoords = SPRITE_COORDS['knight'];
+            // const spriteCoords = SPRITE_COORDS['archer'];
+            // const spriteCoords = SPRITE_COORDS['monk'];
+            // const spriteCoords = SPRITE_COORDS['cleric'];
+            // const spriteCoords = SPRITE_COORDS['mage'];
+            // const spriteCoords = SPRITE_COORDS['shaman'];
+            // const spriteCoords = SPRITE_COORDS['cavalier'];
+            // const spriteCoords = SPRITE_COORDS['troubadaour'];
+            // const spriteCoords = SPRITE_COORDS['nomad'];
+            // const spriteCoords = SPRITE_COORDS['pegasusKnight'];
+            // const spriteCoords = SPRITE_COORDS['wyvernRider'];
+            // const spriteCoords = SPRITE_COORDS['pirate'];
+            // const spriteCoords = SPRITE_COORDS['brigand'];
+            // const spriteCoords = SPRITE_COORDS['dancer'];
+            // const spriteCoords = SPRITE_COORDS['archsage'];
+            // const spriteCoords = SPRITE_COORDS['knightLord'];
+            // const spriteCoords = SPRITE_COORDS['bladeLord'];
+            // const spriteCoords = SPRITE_COORDS['greatLord'];
+            // const spriteCoords = SPRITE_COORDS['hero'];
+            // const spriteCoords = SPRITE_COORDS['assassin'];
+            // const spriteCoords = SPRITE_COORDS['swordMaster'];
+            // const spriteCoords = SPRITE_COORDS['warrior'];
+            // const spriteCoords = SPRITE_COORDS['general'];
+            // const spriteCoords = SPRITE_COORDS['sniper'];
+            // const spriteCoords = SPRITE_COORDS['bishopMale'];
+            // const spriteCoords = SPRITE_COORDS['bishopFemale'];
+            // const spriteCoords = SPRITE_COORDS['sageMale'];
+            // const spriteCoords = SPRITE_COORDS['druid'];
+            // const spriteCoords = SPRITE_COORDS['paladin'];
+            // const spriteCoords = SPRITE_COORDS['valkyrie'];
+            // const spriteCoords = SPRITE_COORDS['nomadTrooper'];
+            // const spriteCoords = SPRITE_COORDS['falconKnight'];
+            // const spriteCoords = SPRITE_COORDS['wyvernLord'];
+            // const spriteCoords = SPRITE_COORDS['berserker'];
+            // const spriteCoords = SPRITE_COORDS['soldier'];
+            // const spriteCoords = SPRITE_COORDS['bard'];
+            // const spriteCoords = SPRITE_COORDS['darkDruid'];
 
             const idle = getMapIdle(
                 spriteSheet,
