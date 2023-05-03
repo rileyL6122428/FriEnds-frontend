@@ -3,11 +3,9 @@ import { RendererCommon } from "./renderer-common";
 
 export class AnimationFrame {
 
-    private elapsed: number = 0;
-
     constructor(
         private spriteSheet: HTMLImageElement,
-        private duration: number,
+        readonly duration: number,
 
         private frameX: number,
         private frameY: number,
@@ -34,15 +32,6 @@ export class AnimationFrame {
             width,
             height
         );
-        this.elapsed += 1;
-    }
-
-    isDone() {
-        return this.elapsed >= this.duration;
-    }
-
-    reset() {
-        this.elapsed = 0;
     }
 }
 
@@ -51,11 +40,23 @@ const FRAME_HEIGHT = 29;
 
 export class Animation {
 
-    activeFrameIdx: number = 0;
+    private _aggregateFrameIdx: number = 0;
+    readonly aggregateDuration: number = 0;
+    private aggregateFrameIndicesToFrames = new Map<number, AnimationFrame>();
 
     constructor(
         private frames: AnimationFrame[],
-    ) { }
+    ) {
+        this.aggregateDuration = frames.reduce((acc, frame) => acc + frame.duration, 0);
+
+        let subdividedFrameIndex = 0;
+        this.frames.forEach((frame) => {
+            for (let i = subdividedFrameIndex; i < subdividedFrameIndex + frame.duration; i++) {
+                this.aggregateFrameIndicesToFrames.set(i, frame);
+            }
+            subdividedFrameIndex += frame.duration;
+        });
+    }
 
     render(
         offsetX: number,
@@ -63,19 +64,22 @@ export class Animation {
         width: number,
         height: number,
     ) {
-        this.frames[this.activeFrameIdx].render(
+        // this.frames[this._aggregateFrameIdx].render(
+        this.aggregateFrameIndicesToFrames.get(this._aggregateFrameIdx)!.render(
             offsetX,
             offsetY,
             width,
             height,
         );
-        if (this.frames[this.activeFrameIdx].isDone()) {
-            this.frames[this.activeFrameIdx].reset();
-            this.activeFrameIdx += 1;
-            if (this.activeFrameIdx >= this.frames.length) {
-                this.activeFrameIdx = 0;
-            }
-        }
+        this.incrementAggregateFrameIdx();
+    }
+
+    incrementAggregateFrameIdx() {
+        this._aggregateFrameIdx = (this._aggregateFrameIdx + 1) % this.aggregateDuration;
+    }
+
+    set aggregateFrameIdx(idx: number) {
+        this._aggregateFrameIdx = idx % this.aggregateDuration;
     }
 }
 
@@ -141,29 +145,7 @@ export function getMapHover(
     startX: number,
     startY: number
     ) {
-    const frames = [
-        new AnimationFrame(
-            spriteSheet,
-            3,
-
-            startX,
-            startY + 32,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            15,
-
-            startX,
-            startY,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
+    const frames = [ 
         new AnimationFrame(
             spriteSheet,
             2,
@@ -181,6 +163,28 @@ export function getMapHover(
 
             startX,
             startY + 64,
+            FRAME_WIDTH,
+            FRAME_HEIGHT,
+
+            canvasCtx
+        ),
+        new AnimationFrame(
+            spriteSheet,
+            3,
+
+            startX,
+            startY + 32,
+            FRAME_WIDTH,
+            FRAME_HEIGHT,
+
+            canvasCtx
+        ),
+        new AnimationFrame(
+            spriteSheet,
+            15,
+
+            startX,
+            startY,
             FRAME_WIDTH,
             FRAME_HEIGHT,
 
@@ -748,6 +752,7 @@ export class MapSpriteAnimations {
     render() {
         const { x, y } = this.rc.gridSpaceToCanvas(this.piece.col, this.piece.row);
         if (this.rc.game.cursorIsHovering(this.piece) && this.rc.game.mainPlayerName === this.piece.player.name) {
+            this.idle.incrementAggregateFrameIdx();
             this.hover.render(
                 x,
                 y,
@@ -761,6 +766,7 @@ export class MapSpriteAnimations {
                 this.rc.gridSpaceWidth,
                 this.rc.gridSpaceHeight,
             );
+            this.hover.aggregateFrameIdx = 0;
         }
     }
 }
