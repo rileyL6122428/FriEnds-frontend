@@ -35,8 +35,8 @@ export class AnimationFrame {
     }
 }
 
-const FRAME_WIDTH = 29;
-const FRAME_HEIGHT = 29;
+const DEFAULT_FRAME_WIDTH = 29;
+const DEFAULT_FRAME_HEIGHT = 29;
 
 export class Animation {
 
@@ -64,7 +64,6 @@ export class Animation {
         width: number,
         height: number,
     ) {
-        // this.frames[this._aggregateFrameIdx].render(
         this.aggregateFrameIndicesToFrames.get(this._aggregateFrameIdx)!.render(
             offsetX,
             offsetY,
@@ -86,55 +85,28 @@ export class Animation {
 function getMapIdle(
     spriteSheet: HTMLImageElement,
     canvasCtx: CanvasRenderingContext2D,
-    startX: number,
-    startY: number
+    spriteName: string,
     ) {
-    const frames = [
-        new AnimationFrame(
-            spriteSheet,
-            20,
-
-            startX,
-            startY,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            2,
-
-            startX,
-            startY + 32,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            15,
-
-            startX,
-            startY + 64,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            4,
-
-            startX,
-            startY + 32,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
+    const spriteCoords = SPRITE_COORDS[spriteName].idle;
+    const coordsAndDuration = [
+        [spriteCoords.top, 20],
+        [spriteCoords.mid, 2],
+        [spriteCoords.bottom, 15],
+        [spriteCoords.mid, 4],
     ];
+    const frames = coordsAndDuration.map(([coords, duration]) => {
+        return new AnimationFrame(
+            spriteSheet,
+            duration,
+
+            coords.startX,
+            coords.startY,
+            coords.width,
+            coords.height,
+
+            canvasCtx
+        );
+    });
 
     return new Animation(frames);
 }
@@ -142,500 +114,733 @@ function getMapIdle(
 export function getMapHover(
     spriteSheet: HTMLImageElement,
     canvasCtx: CanvasRenderingContext2D,
-    startX: number,
-    startY: number
+    spriteName: string,
     ) {
-    const frames = [ 
-        new AnimationFrame(
-            spriteSheet,
-            2,
 
-            startX,
-            startY + 32,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            14,
-
-            startX,
-            startY + 64,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            3,
-
-            startX,
-            startY + 32,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
-        new AnimationFrame(
-            spriteSheet,
-            15,
-
-            startX,
-            startY,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
-
-            canvasCtx
-        ),
+    const spriteCoords = SPRITE_COORDS[spriteName].hover;
+    const coordsAndDuration = [
+        [spriteCoords.mid, 2],
+        [spriteCoords.bottom, 14],
+        [spriteCoords.mid, 3],
+        [spriteCoords.top, 15],
     ];
+    const frames = coordsAndDuration.map(([coords, duration]) => {
+        return new AnimationFrame(
+            spriteSheet,
+            duration,
 
+            coords.startX,
+            coords.startY,
+            coords.width,
+            coords.height,
+
+            canvasCtx
+        );
+    });
     return new Animation(frames);
 }
 
+function getFramesCoords({ top, mid, bottom }: any = {}) {
+    if (top.width === undefined) {
+        top.width = DEFAULT_FRAME_WIDTH;
+    }
+    if (top.height === undefined) {
+        top.height = DEFAULT_FRAME_HEIGHT;
+    }
 
-const SPRITE_COORDS = {
+    if (mid === undefined) {
+        mid = {
+            width: DEFAULT_FRAME_WIDTH,
+            height: DEFAULT_FRAME_HEIGHT,
+            startX: top.startX,
+            startY: top.startY + DEFAULT_FRAME_HEIGHT + 3,
+        }        
+    }
+    if (bottom === undefined) {
+        bottom = {
+            width: DEFAULT_FRAME_WIDTH,
+            height: DEFAULT_FRAME_HEIGHT,
+            startX: mid.startX,
+            startY: mid.startY +  DEFAULT_FRAME_HEIGHT + 3,
+        }
+    }
+
+    return { top, mid, bottom, };
+}
+
+
+const SPRITE_COORDS: any = {
     eliwood: {
-        idle: {
-            startX: 190,
-            startY: 42,
-        },
-        hover: {
-            startX: 322,
-            startY: 42,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 42,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 42,
+            }
+        })
     },
     knightLord: {
-        idle: {
-            startX: 369,
-            startY: 42,
-        },
-        hover: {
-            startX: 500,
-            startY: 42,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 42,
+            },
+        }),
+        hover: getFramesCoords({
+            top: {
+               startX: 500,
+                startY: 42,
+            },
+        }),
     },
     lyn: {
-        idle: {
-            startX: 190,
-            startY: 174,
-        },
-        hover: {
-            startX: 322,
-            startY: 174,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 174,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 174,
+            }
+        }),
     },
     bladeLord: {
-        idle: {
-            startX: 369,
-            startY: 174,
-        },
-        hover: {
-            startX: 500,
-            startY: 174,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 174,
+            },
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 174,
+            }
+        }),
     },
     hector: {
-        idle: {
-            startX: 190,
-            startY: 306,
-        },
-        hover: {
-            startX: 322,
-            startY: 306,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 306,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 306,
+            }
+        }),
     },
     greatLord: {
-        idle: {
-            startX: 369,
-            startY: 306,
-        },
-        hover: {
-            startX: 500,
-            startY: 306,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 306,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 306,
+            }
+        }),
     },
     mercenary: {
-        idle: {
-            startX: 190,
-            startY: 438,
-        },
-        hover: {
-            startX: 322,
-            startY: 438,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 438,
+            },
+        }), 
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 438,
+            },
+        }),
     },
     hero: {
-        idle: {
-            startX: 369,
-            startY: 438,
-        },
-        hover: {
-            startX: 500,
-            startY: 438,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 438,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 438,
+            }
+        }),
     },
     thief: {
-        idle: {
-            startX: 190,
-            startY: 704,
-        },
-        hover: {
-            startX: 322,
-            startY: 704,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 704,
+            },
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 704,
+            }
+        }),
     },
     assassin: {
-        idle: {
-            startX: 369,
-            startY: 704,
-        },
-        hover: {
-            startX: 500,
-            startY: 704,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 704,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 704,
+            }
+        }),
     },
     myrmidon: {
-        idle: {
-            startX: 190,
-            startY: 837,
-        },
-        hover: {
-            startX: 322,
-            startY: 837,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 837,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            mid: {
+                startX: 190,
+                startY: 837 + DEFAULT_FRAME_HEIGHT + 3,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            bottom: {
+                startX: 191,
+                startY: 837 + DEFAULT_FRAME_HEIGHT * 2 + 6,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 837,
+            }
+        }),
     },
     swordMaster: {
-        idle: {
-            startX: 369,
-            startY: 837,
-        },
-        hover: {
-            startX: 500,
-            startY: 837,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 837,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            mid: {
+                startX: 369,
+                startY: 837 + DEFAULT_FRAME_HEIGHT + 4,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            bottom: {
+                startX: 369,
+                startY: 837 + DEFAULT_FRAME_HEIGHT * 2 + 6,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 830,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            mid: {
+                startX: 500,
+                startY: 830 + DEFAULT_FRAME_HEIGHT + 3,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            bottom: {
+                startX: 500,
+                startY: 830 + DEFAULT_FRAME_HEIGHT * 2 + 14,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+        })
     },
     fighter: {
-        idle: {
-            startX: 190,
-            startY: 1103,
-        },
-        hover: {
-            startX: 322,
-            startY: 1103,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 1103,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 1103,
+            }
+        }),
     },
     warrior: {
-        idle: {
-            startX: 369,
-            startY: 1103,
-        },
-        hover: {
-            startX: 500,
-            startY: 1103,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 1103,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 1103,
+            }
+        }),
     },
     knight: {
-        idle: {
-            startX: 190,
-            startY: 1236,
-        },
-        hover: {
-            startX: 322,
-            startY: 1236,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 1236,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 1236,
+            }
+        }),
     },
     general: {
-        idle: {
-            startX: 369,
-            startY: 1236,
-        },
-        hover: {
-            startX: 500,
-            startY: 1236,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 1236,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 1236,
+            }
+        }),
     },
     archer: {
-        idle: {
-            startX: 190,
-            startY: 1369,
-        },
-        hover: {
-            startX: 322,
-            startY: 1369,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 1369,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            mid: {
+                startX: 190,
+                startY: 1369 + DEFAULT_FRAME_HEIGHT + 3,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+            bottom: {
+                startX: 190,
+                startY: 1369 + DEFAULT_FRAME_HEIGHT * 2 + 5,
+                width: DEFAULT_FRAME_WIDTH,
+                height: DEFAULT_FRAME_HEIGHT,
+            },
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 1369,
+            }
+        }),
     },
     sniper: {
-        idle: {
-            startX: 369,
-            startY: 1369,
-        },
-        hover: {
-            startX: 500,
-            startY: 1369,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 1369,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 1369,
+            }
+        }),
     },
     monk: {
-        idle: {
-            startX: 190,
-            startY: 1635,
-        },
-        hover: {
-            startX: 322,
-            startY: 1635,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 1635,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 1635,
+            }
+        }),
     },
     bishopMale: {
-        idle: {
-            startX: 369,
-            startY: 1635,
-        },
-        hover: {
-            startX: 500,
-            startY: 1635,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 1635,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 1635,
+            }
+        }),
     },
     cleric: {
-        idle: {
-            startX: 190,
-            startY: 1768,
-        },
-        hover: {
-            startX: 322,
-            startY: 1768,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 1768,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 1768,
+            }
+        }),
     },
     bishopFemale: {
-        idle: {
-            startX: 369,
-            startY: 1768,
-        },
-        hover: {
-            startX: 500,
-            startY: 1768,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 1768,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 1768,
+            }
+        }),
     },
     mageMale: {
-        idle: {
-            startX: 190,
-            startY: 1901,
-        },
-        hover: {
-            startX: 322,
-            startY: 1901,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 1901,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 1901,
+            }
+        }),
     },
     sageMale: {
-        idle: {
-            startX: 369,
-            startY: 1901,
-        },
-        hover: {
-            startX: 500,
-            startY: 1901,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 1901,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 1901,
+            }
+        }),
     },
     shaman: {
-        idle: {
-            startX: 190,
-            startY: 2167,
-        },
-        hover: {
-            startX: 322,
-            startY: 2167,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 2167,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 2167,
+            }
+        }),
     },
     druid: {
-        idle: {
-            startX: 369,
-            startY: 2167,
-        },
-        hover: {
-            startX: 500,
-            startY: 2167,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 2167,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 2167,
+            }
+        }),
     },
     cavalier: {
-        idle: {
-            startX: 190,
-            startY: 2433,
-        },
-        hover: {
-            startX: 322,
-            startY: 2433,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 2433,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 2433,
+            }
+        }),
     },
     paladin: {
-        idle: {
-            startX: 369,
-            startY: 2433,
-        },
-        hover: {
-            startX: 500,
-            startY: 2433,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 2433,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 2433,
+            }
+        }),
     },
     troubadaour: {
-        idle: {
-            startX: 190,
-            startY: 2566,
-        },
-        hover: {
-            startX: 322,
-            startY: 2566,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 2566,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 2566,
+            }
+        }),
     },
     valkyrie: {
-        idle: {
-            startX: 369,
-            startY: 2566,
-        },
-        hover: {
-            startX: 500,
-            startY: 2566,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 2566,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 2566,
+            }
+        }),
     },
     nomad: {
-        idle: {
-            startX: 190,
-            startY: 2699,
-        },
-        hover: {
-            startX: 322,
-            startY: 2699,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 2699,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 2699,
+            }
+        }),
     },
     nomadTrooper: {
-        idle: {
-            startX: 369,
-            startY: 2699,
-        },
-        hover: {
-            startX: 500,
-            startY: 2699,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 2699,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 2699,
+            }
+        }),
     },
     pegasusKnight: {
-        idle: {
-            startX: 190,
-            startY: 2965,
-        },
-        hover: {
-            startX: 324,
-            startY: 2965,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 2965,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 324,
+                startY: 2965,
+            }
+        }),
     },
     falconKnight: {
-        idle: {
-            startX: 369,
-            startY: 2965,
-        },
-        hover: {
-            startX: 500,
-            startY: 2965,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 2965,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 2965,
+            }
+        }),
     },
     wyvernRider: {
-        idle: {
-            startX: 190,
-            startY: 3098,
-        },
-        hover: {
-            startX: 324,
-            startY: 3098,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 3098,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 324,
+                startY: 3098,
+            }
+        }),
     },
     wyvernLord: {
-        idle: {
-            startX: 360,
-            startY: 3098,
-        },
-        hover: {
-            startX: 495,
-            startY: 3098,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 360,
+                startY: 3098,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 495,
+                startY: 3098,
+            }
+        }),
     },
     pirate: {
-        idle: {
-            startX: 190,
-            startY: 3231,
-        },
-        hover: {
-            startX: 322,
-            startY: 3231,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 3231,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 3231,
+            }
+        }),
     },
     berserker: {
-        idle: {
-            startX: 369,
-            startY: 3231,
-        },
-        hover: {
-            startX: 500,
-            startY: 3231,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 3231,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 3231,
+            }
+        }),
     },
     brigand: {
-        idle: {
-            startX: 190,
-            startY: 3364,
-        },
-        hover: {
-            startX: 322,
-            startY: 3364,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 3364,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 3364,
+            }
+        }),
     },
     soldier: {
-        idle: {
-            startX: 369,
-            startY: 3364,
-        },
-        hover: {
-            startX: 500,
-            startY: 3364,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 3364,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 3364,
+            }
+        }),
     },
     dancer: {
-        idle: {
-            startX: 190,
-            startY: 3497,
-        },
-        hover: {
-            startX: 322,
-            startY: 3497,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 3497,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 3497,
+            }
+        }),
     },
     bard: {
-        idle: {
-            startX: 369,
-            startY: 3497,
-        },
-        hover: {
-            startX: 500,
-            startY: 3497,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 3497,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 3497,
+            }
+        }),
     },
     archsage: {
-        idle: {
-            startX: 190,
-            startY: 3630,
-        },
-        hover: {
-            startX: 322,
-            startY: 3630,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 190,
+                startY: 3630,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 322,
+                startY: 3630,
+            }
+        }),
     },
     darkDruid: {
-        idle: {
-            startX: 369,
-            startY: 3630,
-        },
-        hover: {
-            startX: 500,
-            startY: 3630,
-        },
+        idle: getFramesCoords({
+            top: {
+                startX: 369,
+                startY: 3630,
+            }
+        }),
+        hover: getFramesCoords({
+            top: {
+                startX: 500,
+                startY: 3630,
+            }
+        }),
     },
 };
 
@@ -647,8 +852,8 @@ export function getHectorMapIdle(spriteSheet: HTMLImageElement, canvasCtx: Canva
 
             190,
             306,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -658,8 +863,8 @@ export function getHectorMapIdle(spriteSheet: HTMLImageElement, canvasCtx: Canva
 
             190,
             338,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
             
             canvasCtx
             ),
@@ -669,8 +874,8 @@ export function getHectorMapIdle(spriteSheet: HTMLImageElement, canvasCtx: Canva
             
             190,
             370,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -680,8 +885,8 @@ export function getHectorMapIdle(spriteSheet: HTMLImageElement, canvasCtx: Canva
 
             190,
             338,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -698,8 +903,8 @@ export function getHectorMapHover(spriteSheet: HTMLImageElement, canvasCtx: Canv
 
             322,
             338,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -709,8 +914,8 @@ export function getHectorMapHover(spriteSheet: HTMLImageElement, canvasCtx: Canv
 
             322,
             306,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -720,8 +925,8 @@ export function getHectorMapHover(spriteSheet: HTMLImageElement, canvasCtx: Canv
 
             322,
             338,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -731,8 +936,8 @@ export function getHectorMapHover(spriteSheet: HTMLImageElement, canvasCtx: Canv
 
             322,
             370,
-            FRAME_WIDTH,
-            FRAME_HEIGHT,
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
 
             canvasCtx
         ),
@@ -793,62 +998,61 @@ export class MapSpritesRenderer {
                 spriteSheet = this.enemySpriteSheet;
             }
 
-            // const spriteCoords = SPRITE_COORDS['hector'];
-            // const spriteCoords = SPRITE_COORDS['lyn'];
-            const spriteCoords = SPRITE_COORDS['eliwood'];
-            // const spriteCoords = SPRITE_COORDS['mercenary'];
-            // const spriteCoords = SPRITE_COORDS['thief'];
-            // const spriteCoords = SPRITE_COORDS['myrmidon'];
-            // const spriteCoords = SPRITE_COORDS['fighter'];
-            // const spriteCoords = SPRITE_COORDS['knight'];
-            // const spriteCoords = SPRITE_COORDS['archer'];
-            // const spriteCoords = SPRITE_COORDS['monk'];
-            // const spriteCoords = SPRITE_COORDS['cleric'];
-            // const spriteCoords = SPRITE_COORDS['mage'];
-            // const spriteCoords = SPRITE_COORDS['shaman'];
-            // const spriteCoords = SPRITE_COORDS['cavalier'];
-            // const spriteCoords = SPRITE_COORDS['troubadaour'];
-            // const spriteCoords = SPRITE_COORDS['nomad'];
-            // const spriteCoords = SPRITE_COORDS['pegasusKnight'];
-            // const spriteCoords = SPRITE_COORDS['wyvernRider'];
-            // const spriteCoords = SPRITE_COORDS['pirate'];
-            // const spriteCoords = SPRITE_COORDS['brigand'];
-            // const spriteCoords = SPRITE_COORDS['dancer'];
-            // const spriteCoords = SPRITE_COORDS['archsage'];
-            // const spriteCoords = SPRITE_COORDS['knightLord'];
-            // const spriteCoords = SPRITE_COORDS['bladeLord'];
-            // const spriteCoords = SPRITE_COORDS['greatLord'];
-            // const spriteCoords = SPRITE_COORDS['hero'];
-            // const spriteCoords = SPRITE_COORDS['assassin'];
-            // const spriteCoords = SPRITE_COORDS['swordMaster'];
-            // const spriteCoords = SPRITE_COORDS['warrior'];
-            // const spriteCoords = SPRITE_COORDS['general'];
-            // const spriteCoords = SPRITE_COORDS['sniper'];
-            // const spriteCoords = SPRITE_COORDS['bishopMale'];
-            // const spriteCoords = SPRITE_COORDS['bishopFemale'];
-            // const spriteCoords = SPRITE_COORDS['sageMale'];
-            // const spriteCoords = SPRITE_COORDS['druid'];
-            // const spriteCoords = SPRITE_COORDS['paladin'];
-            // const spriteCoords = SPRITE_COORDS['valkyrie'];
-            // const spriteCoords = SPRITE_COORDS['nomadTrooper'];
-            // const spriteCoords = SPRITE_COORDS['falconKnight'];
-            // const spriteCoords = SPRITE_COORDS['wyvernLord'];
-            // const spriteCoords = SPRITE_COORDS['berserker'];
-            // const spriteCoords = SPRITE_COORDS['soldier'];
-            // const spriteCoords = SPRITE_COORDS['bard'];
-            // const spriteCoords = SPRITE_COORDS['darkDruid'];
+            // const spriteName = 'hector';
+            // const spriteName = 'eliwood';
+            // const spriteName = 'lyn';
+            // const spriteName = 'mercenary';
+            const spriteName = 'thief';
+            // const spriteName = 'myrmidon';
+            // const spriteName = 'fighter';
+            // const spriteName = 'knight';
+
+            // const spriteName = 'archer';
+            // const spriteName = 'monk';
+            // const spriteName = 'cleric';
+            // const spriteName = 'mage';
+            // const spriteName = 'shaman';
+            // const spriteName = 'cavalier';
+            // const spriteName = 'troubadaour';
+            // const spriteName = 'nomad';
+            // const spriteName = 'pegasusKnight';
+            // const spriteName = 'wyvernRider';
+            // const spriteName = 'pirate';
+            // const spriteName = 'brigand';
+            // const spriteName = 'dancer';
+            // const spriteName = 'archsage';
+            // const spriteName = 'knightLord';
+            // const spriteName = 'bladeLord';
+            // const spriteName = 'greatLord';
+            // const spriteName = 'hero';
+            // const spriteName = 'assassin';
+            // const spriteName = 'swordMaster';
+            // const spriteName = 'warrior';
+            // const spriteName = 'general';
+            // const spriteName = 'sniper';
+            // const spriteName = 'bishopMale';
+            // const spriteName = 'bishopFemale';
+            // const spriteName = 'sageMale';
+            // const spriteName = 'druid';
+            // const spriteName = 'paladin';
+            // const spriteName = 'valkyrie';
+            // const spriteName = 'nomadTrooper';
+            // const spriteName = 'falconKnight';
+            // const spriteName = 'wyvernLord';
+            // const spriteName = 'berserker';
+            // const spriteName = 'soldier';
+            // const spriteName = 'bard';
+            // const spriteName = 'darkDruid';
 
             const idle = getMapIdle(
                 spriteSheet,
                 this.rc.ctx,
-                spriteCoords.idle.startX,
-                spriteCoords.idle.startY,
+                spriteName
             );
             const hover = getMapHover(
                 spriteSheet,
                 this.rc.ctx,
-                spriteCoords.hover.startX,
-                spriteCoords.hover.startY,
+                spriteName
             );
 
             return new MapSpriteAnimations(idle, hover, piece, this.rc);
