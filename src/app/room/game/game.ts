@@ -25,6 +25,7 @@ export class Game {
     grid: Grid;
     boardPieces: BoardPiece[];
     cursor: Cursor;
+    selectedPiece: BoardPiece | null = null;
     private _humanPlayers: Player[];
 
     constructor(private mainPlayer: Player) {
@@ -97,7 +98,39 @@ export class Game {
         return this._humanPlayers;
     }
 
+    get mainPlayerIsActive(): boolean {
+        return this.activePlayer.name === this.mainPlayerName;
+    }
+
     cursorIsHovering(piece: BoardPiece): boolean {
         return this.cursor.row === piece.row && this.cursor.col === piece.col;
+    }
+
+    handleEnter() {
+        if (this.state === 'waiting') {
+            return;
+        }
+
+        if (this.state === 'playing') {
+            this.handleEnterPlaying();
+        }
+    }
+
+    handleEnterPlaying() {
+        if (!this.mainPlayerIsActive) {
+            return;
+        }
+
+        const hoveredPiece = this.boardPieces.find(piece => this.cursorIsHovering(piece));
+        if (!hoveredPiece) {
+            return;
+        }
+
+        if (hoveredPiece.player.name !== this.mainPlayerName) {
+            return;
+        }
+
+        this.selectedPiece = hoveredPiece;
+        console.log('selected piece', this.selectedPiece);
     }
 }

@@ -147,8 +147,9 @@ export class RoomComponent implements OnInit, OnDestroy, AfterContentInit {
       this.game.moveCursorLeft();
     } else if (event.key === 'ArrowRight') {
       this.game.moveCursorRight();
+    } else if (event.key === 'Enter') {
+      this.game.handleEnter();
     }
-    this.gameRenderer.render();
   }
 
 }
